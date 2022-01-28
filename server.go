@@ -33,13 +33,13 @@ func main() {
 	defer file.Close()
 
 	// Set config for logger
-	loggerConfig := logger.Config{
-		Output: file, // add file to save output
-	}
+	//loggerConfig := logger.Config{
+	//	Output: file, // add file to save output
+	//}
 
 	// Use middlewares for each route
 	app.Use(
-		logger.New(loggerConfig), // add Logger middleware with config
+		logger.New(), // add Logger middleware with config
 	)
 	app.Listen(":8000")
 }

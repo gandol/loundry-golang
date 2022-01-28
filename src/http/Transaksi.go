@@ -7,6 +7,7 @@ import (
 	"loundry/api/src/database"
 	"loundry/api/src/helper"
 	"loundry/api/src/models"
+	"loundry/api/src/service"
 )
 
 const (
@@ -194,6 +195,14 @@ func UpdateStatustransaksi(ctx *fiber.Ctx) error {
 			"message": "unclompleted data",
 		})
 	}
+	var detailTransaksi models.Transaksi
+	if err := database.DBConn.Where("id=?", id).Find(&detailTransaksi).Error; err != nil {
+		return ctx.Status(500).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Internal Server Error",
+		})
+	}
+
 	var dataTransaksi models.Transaksi
 	switch dataUpdate.Status {
 	case Pending:
@@ -210,6 +219,13 @@ func UpdateStatustransaksi(ctx *fiber.Ctx) error {
 		break
 	case Selesai:
 		dataTransaksi.Status = Selesai
+
+		if err := service.CreateNotification(detailTransaksi, "Baju anda sudah selsai di loundry"); err != nil {
+			return ctx.Status(500).JSON(fiber.Map{
+				"status":  "error",
+				"message": "Internal Server Error",
+			})
+		}
 		break
 	default:
 		return ctx.Status(403).JSON(fiber.Map{

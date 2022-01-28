@@ -7,6 +7,9 @@ import (
 )
 
 func SetupRoutes(app *fiber.App) {
+	app.Get("/", func(ctx *fiber.Ctx) error {
+		return ctx.SendString("Hello World")
+	})
 	api := app.Group("/api")
 	apiV1 := api.Group("/v1")
 	apiV1.Post("/login", http.AuthCheck)
@@ -32,6 +35,7 @@ func SetupRoutes(app *fiber.App) {
 	TransactionRoute.Post("/", http.CreateTransaction)
 	TransactionRoute.Get("/", http.GetAllTransaction)
 	TransactionRoute.Get("/:id", http.GetTransactionById)
+	TransactionRoute.Put("/:id/status", http.UpdateStatustransaksi)
 
 	//transaction items route
 	TransactionItemRoute := SecuredV1.Group("/transaction_item")
@@ -40,4 +44,9 @@ func SetupRoutes(app *fiber.App) {
 	TransactionItemRoute.Put("/:id", http.UpdateItemsTransaction)
 	TransactionItemRoute.Delete("/:id", http.DeleteTransactionItems)
 
+	//settings notifications route
+	NotifRoute := SecuredV1.Group("/notif")
+	NotifRoute.Post("/", http.CreateNotificationSettings)
+	NotifRoute.Put("/", http.UpdateNotificationsSetting)
+	NotifRoute.Get("/qr", http.GetNotificationNotificationQris)
 }
